@@ -4,6 +4,7 @@ import { default as dotenv } from 'dotenv'
 import { Options, ServerOptions } from 'probot/lib/types'
 import { GetLogOptions, getLog } from 'probot/lib/helpers/get-log'
 import { readEnvOptions } from 'probot/lib/bin/read-env-options'
+import { version } from '../package.json'
 
 dotenv.config()
 
@@ -79,6 +80,8 @@ if (!appId || !privateKey) {
     )
   }
 }
+
+log.info(`Running file-distributor v${version}`)
 
 const server = new Server(serverOptions)
 
