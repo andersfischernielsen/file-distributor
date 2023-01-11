@@ -1,5 +1,5 @@
 {
-  "owner": "pleo-oss",
+  "owner": "pleo-io",
   "repo": "file-distributor",
   "author": "pleo-bot-auto-versioning <ops+auto_versioning@pleo.io>",
   "onlyPublishWithReleaseLabel": false,
