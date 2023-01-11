@@ -1,5 +1,5 @@
 name: Release
-on: 
+on:
   push:
     branches:
       - main
@@ -7,7 +7,7 @@ on:
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
+
 jobs:
   release:
     name: Release
@@ -21,7 +21,7 @@ jobs:
 
       - uses: webfactory/ssh-agent@v0.5.4
         with:
-            ssh-private-key: ${{ secrets.SSH_RELEASE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_RELEASE_KEY }}
 
       - name: Release
         run: |
@@ -30,7 +30,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   docker:
     name: Push Docker image to Docker Hub
     needs: release
@@ -44,11 +44,12 @@ jobs:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
 
-    steps: 
+    steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
 
       - name: Log in to the GitHub Container registry
         uses: docker/login-action@v2.1.0
