@@ -1,3 +1,23 @@
+# v2.13.4 (Wed Jan 11 2023)
+
+#### 🐞 Fixes
+
+- Ensure the application container image is released on the 'pleo-io' container registry [#103](https://github.com/pleo-io/file-distributor/pull/103) ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+#### ⚠️ Pushed to `main`
+
+- Hotfix application container image releases ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+#### 🏠 Internal
+
+- Log application version on startup [#102](https://github.com/pleo-io/file-distributor/pull/102) ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+#### Authors: 1
+
+- Anders Fischer-Nielsen ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+---
+
 # v2.13.3 (Tue Jan 10 2023)
 
 #### 🐞 Fixes
