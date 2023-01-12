@@ -104,7 +104,7 @@ export const validateFiles = (configuration: RepositoryConfiguration, files: str
       files.some(t => new RegExp(file.source).test(t))
         ? errors
         : errors.add(
-            `'${file.source}' was not found in the release '${version}' - make sure the file is present in the release.`,
+            `'${file.source}' was not found in the release '${version}' - make sure the file is present in the release or delete the file from your configuration.`,
           ),
     new Set<string>(),
   )
