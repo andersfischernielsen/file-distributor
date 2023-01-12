@@ -97,7 +97,7 @@ describe('Pull Request reviews', () => {
       const checkId = 123
       const expectedMainBody = `🤖 It looks like your configuration changes are invalid.\nYou can see the error report [here](https://github.com/${testRepository.owner}/${testRepository.repo}/pull/${testPullRequestNumber}/checks?check_run_id=${checkId}).`
 
-      const result = await commentOnPullRequest(testRepository, testPullRequestNumber, checkId, 'failure')
+      const result = await commentOnPullRequest(testRepository, testPullRequestNumber, checkId)
 
       expect(octokitMock.pulls.createReview).toBeCalledTimes(1)
       expect(octokitMock.pulls.createReview).toHaveBeenCalledWith({
@@ -107,21 +107,6 @@ describe('Pull Request reviews', () => {
         body: expectedMainBody,
       })
 
-      expect(result).toEqual('reviewId')
-    })
-
-    test('can create success comments on PRs', async () => {
-      const checkId = 123
-      const expectedBody = '🤖 Well done! The configuration is valid.'
-      const result = await commentOnPullRequest(testRepository, testPullRequestNumber, checkId, 'success')
-
-      expect(octokitMock.pulls.createReview).toBeCalledTimes(1)
-      expect(octokitMock.pulls.createReview).toHaveBeenCalledWith({
-        ...testRepository,
-        pull_number: testPullRequestNumber,
-        event: 'COMMENT',
-        body: expectedBody,
-      })
       expect(result).toEqual('reviewId')
     })
   })

@@ -55,12 +55,7 @@ export const validation = (
 
     if (!configFile) return
 
-    const checkInput = {
-      ...repository,
-      sha: sha,
-    }
-
-    const previousCheckId =
+    const previousCheck =
       checkId ??
       (await createCheck({
         ...repository,
@@ -70,20 +65,27 @@ export const validation = (
         errors: [],
       }))
 
+    const check = {
+      ...repository,
+      sha: sha,
+      checkRunId: previousCheck,
+    }
+
     log.debug('Found repository configuration file: %s.', configFile)
 
     const configurationChanges = await determineConfigurationChanges(configFileName, repository, sha)
     const result = await validateChanges(configurationChanges)
     const errors = E.isLeft(result) ? result.left : []
 
-    const comment = await commentOnPullRequest(repository, prNumber, previousCheckId, conclusion(errors))
-    log.debug(`Submitted comment on PR #%d in %s.`, prNumber, comment)
+    if (E.isLeft(result)) {
+      const comment = await commentOnPullRequest(repository, prNumber, previousCheck)
+      log.debug(`Submitted comment on PR #%d in %s.`, prNumber, comment)
+    }
 
     const checkConclusion = resolveCheck(
       {
-        ...checkInput,
+        ...check,
         conclusion: conclusion(errors),
-        checkRunId: previousCheckId,
         errors,
       },
       configFileName,
@@ -93,12 +95,11 @@ export const validation = (
       await updateCheck(checkConclusion)
     } catch (e) {
       const failure = resolveCheck({
-        ...checkInput,
+        ...check,
         conclusion: 'failure',
-        checkRunId: previousCheckId,
         errors: [],
       })
-      log.error('Failed to update check %d.', previousCheckId)
+      log.error('Failed to update check %d.', previousCheck)
       await updateCheck(failure)
     }
 

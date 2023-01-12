@@ -268,23 +268,16 @@ export const git = (log: Logger, octokit: Pick<OctokitInstance, 'pulls' | 'repos
     return createOrUpdatePullRequest(repository, prDetails, repository.defaultBranch)
   }
 
-  const commentOnPullRequest = async (
-    repository: RepositoryDetails,
-    pullRequestNumber: number,
-    checkId: number,
-    result: 'action_required' | 'success',
-  ) => {
+  const commentOnPullRequest = async (repository: RepositoryDetails, pullRequestNumber: number, checkId: number) => {
     log.debug('Creating review comment on PR #%d.', pullRequestNumber)
     const invalidBody = `🤖 It looks like your configuration changes are invalid.\nYou can see the error report [here](https://github.com/${repository.owner}/${repository.repo}/pull/${pullRequestNumber}/checks?check_run_id=${checkId}).`
-    const validBody = '🤖 Well done! The configuration is valid.'
-    const wasSuccessful = result === 'success'
     const {
       data: { id },
     } = await octokit.pulls.createReview({
       ...repository,
       pull_number: pullRequestNumber,
       event: 'COMMENT',
-      body: wasSuccessful ? validBody : invalidBody,
+      body: invalidBody,
     })
 
     log.debug("Created review comment '%d'.", id)
