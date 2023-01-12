@@ -1,3 +1,23 @@
+# v2.13.5 (Thu Jan 12 2023)
+
+#### 🐞 Fixes
+
+- Only comment on PR validation failures [#108](https://github.com/pleo-io/file-distributor/pull/108) ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+#### 🏠 Internal
+
+- Update files based on repository configuration [#106](https://github.com/pleo-io/file-distributor/pull/106) ([@pleo-file-distributor[bot]](https://github.com/pleo-file-distributor[bot]) [@andersfischernielsen](https://github.com/andersfischernielsen))
+- Ensure latest changes to the default branch are being included in released container images [#105](https://github.com/pleo-io/file-distributor/pull/105) ([@andersfischernielsen](https://github.com/andersfischernielsen))
+- Fix redundant duplicated testing workflow runs [#101](https://github.com/pleo-io/file-distributor/pull/101) ([@andersfischernielsen](https://github.com/andersfischernielsen))
+- Create templates.yaml [#104](https://github.com/pleo-io/file-distributor/pull/104) ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+#### Authors: 2
+
+- [@pleo-file-distributor[bot]](https://github.com/pleo-file-distributor[bot])
+- Anders Fischer-Nielsen ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+---
+
 # v2.13.4 (Wed Jan 11 2023)
 
 #### 🐞 Fixes
