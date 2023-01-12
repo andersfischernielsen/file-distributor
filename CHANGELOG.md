@@ -1,3 +1,15 @@
+# v2.13.6 (Thu Jan 12 2023)
+
+#### 🐞 Fixes
+
+- Extend validation error for missing files to reduce confusion [#110](https://github.com/pleo-io/file-distributor/pull/110) ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+#### Authors: 1
+
+- Anders Fischer-Nielsen ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+---
+
 # v2.13.5 (Thu Jan 12 2023)
 
 #### 🐞 Fixes
