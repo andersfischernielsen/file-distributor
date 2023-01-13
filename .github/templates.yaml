@@ -1,5 +1,7 @@
 version: v16.4.0
 
+automerge: true
+
 files:
   - .github/.kodiak.toml
   - .github/workflows/close-stale-prs.yaml
