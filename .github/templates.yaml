@@ -1,7 +1,7 @@
-version: v16.2.1
+version: v16.4.0
 
 files:
   - .github/.kodiak.toml
+  - .github/workflows/close-stale-prs.yaml
 
 values:
-  
