@@ -155,33 +155,31 @@ export const git = (log: Logger, octokit: Pick<OctokitInstance, 'pulls' | 'repos
     return toUpdate
   }
 
-  const mergePullRequest = async (number: number, repository: RepositoryDetails) => {
-    log.debug('Attempting automerge of PR #%d.', number)
-    const merged = await octokit.pulls.merge({
-      ...repository,
-      pull_number: number,
-      merge_method: 'squash',
-    })
-    log.debug('Merged PR #%d.', number)
+  const mergePullRequest = async (number: number | undefined, repository: RepositoryDetails) => {
+    if (number === undefined) return
 
-    return merged
+    log.debug('Attempting automerge of PR #%d.', number)
+    try {
+      const {
+        data: { merged },
+      } = await octokit.pulls.merge({
+        ...repository,
+        pull_number: number,
+        merge_method: 'squash',
+      })
+      return merged
+    } catch (e: unknown) {
+      return false
+    }
   }
 
-  const createOrUpdatePullRequest = async (
-    repository: RepositoryDetails,
-    details: PRDetails,
-    baseBranch: string,
-    automerge?: boolean,
-  ) => {
+  const createOrUpdatePullRequest = async (repository: RepositoryDetails, details: PRDetails, baseBranch: string) => {
     const currentPullRequest = await getExistingPullRequest(repository)
 
     const pr = currentPullRequest
       ? await updatePullRequest(repository, details, currentPullRequest.number)
       : await createPullRequest(repository, details, baseBranch)
 
-    if (automerge) {
-      await mergePullRequest(pr, repository)
-    }
     return pr
   }
 
@@ -242,11 +240,7 @@ export const git = (log: Logger, octokit: Pick<OctokitInstance, 'pulls' | 'repos
     return filenames
   }
 
-  const commitFilesToPR = async (
-    repository: RepositoryDetails,
-    version: string,
-    files: File[],
-  ): Promise<number | undefined> => {
+  const commitFilesToPR = async (repository: RepositoryDetails, version: string, files: File[]) => {
     const baseBranchLastCommitSha = await extractBranchInformation(repository)
 
     const title = 'Update files based on repository configuration'
@@ -268,7 +262,11 @@ export const git = (log: Logger, octokit: Pick<OctokitInstance, 'pulls' | 'repos
     return createOrUpdatePullRequest(repository, prDetails, repository.defaultBranch)
   }
 
-  const commentOnPullRequest = async (repository: RepositoryDetails, pullRequestNumber: number, checkId: number) => {
+  const commentErrorOnPullRequest = async (
+    repository: RepositoryDetails,
+    pullRequestNumber: number,
+    checkId: number,
+  ) => {
     log.debug('Creating review comment on PR #%d.', pullRequestNumber)
     const invalidBody = `🤖 It looks like your configuration changes are invalid.\nYou can see the error report [here](https://github.com/${repository.owner}/${repository.repo}/pull/${pullRequestNumber}/checks?check_run_id=${checkId}).`
     const {
@@ -278,6 +276,24 @@ export const git = (log: Logger, octokit: Pick<OctokitInstance, 'pulls' | 'repos
       pull_number: pullRequestNumber,
       event: 'COMMENT',
       body: invalidBody,
+    })
+
+    log.debug("Created review comment '%d'.", id)
+    return id
+  }
+
+  const commentMergeErrorOnPullRequest = async (repository: RepositoryDetails, pullRequestNumber?: number) => {
+    if (pullRequestNumber === undefined) return undefined
+
+    log.debug('Creating review comment on PR #%d.', pullRequestNumber)
+    const body = `🤖 This PR could not be automerged. \n\nEnsure that: \n - administrators are allowed to bypass branch protections for the repository.\n - the GitHub App has administrator access for the organisation.`
+    const {
+      data: { id },
+    } = await octokit.pulls.createReview({
+      ...repository,
+      pull_number: pullRequestNumber,
+      event: 'COMMENT',
+      body,
     })
 
     log.debug("Created review comment '%d'.", id)
@@ -321,8 +337,10 @@ export const git = (log: Logger, octokit: Pick<OctokitInstance, 'pulls' | 'repos
     commitFilesToPR,
     getCommitFiles,
     getFilesChanged,
-    commentOnPullRequest,
+    commentErrorOnPullRequest,
+    commentMergeErrorOnPullRequest,
     createCheck,
     updateCheck,
+    mergePullRequest,
   }
 }

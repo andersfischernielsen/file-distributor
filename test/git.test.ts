@@ -86,7 +86,7 @@ describe('Pull Request reviews', () => {
 
   const testPullRequestNumber = 1
 
-  const { commentOnPullRequest, commitFilesToPR } = git(log, octokitMock)
+  const { commentErrorOnPullRequest, commitFilesToPR } = git(log, octokitMock)
 
   describe('Create reviews', () => {
     beforeEach(() => {
@@ -97,7 +97,7 @@ describe('Pull Request reviews', () => {
       const checkId = 123
       const expectedMainBody = `🤖 It looks like your configuration changes are invalid.\nYou can see the error report [here](https://github.com/${testRepository.owner}/${testRepository.repo}/pull/${testPullRequestNumber}/checks?check_run_id=${checkId}).`
 
-      const result = await commentOnPullRequest(testRepository, testPullRequestNumber, checkId)
+      const result = await commentErrorOnPullRequest(testRepository, testPullRequestNumber, checkId)
 
       expect(octokitMock.pulls.createReview).toBeCalledTimes(1)
       expect(octokitMock.pulls.createReview).toHaveBeenCalledWith({

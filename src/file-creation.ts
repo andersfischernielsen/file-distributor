@@ -12,7 +12,7 @@ export const fileCreation = (
   const pushFiles = async (repository: RepositoryDetails, sha: string, configFileName: string) => {
     const { combineConfigurations, determineConfigurationChanges } = configuration(log, octokit)
     const { getReleaseInformation, renderFiles } = release(log, octokit)
-    const { commitFilesToPR, getCommitFiles } = git(log, octokit)
+    const { commitFilesToPR, getCommitFiles, mergePullRequest, commentMergeErrorOnPullRequest } = git(log, octokit)
     const { owner, repo } = repository
     log.info('Processing changes made in commit %s.', sha)
     const filesChanged = await getCommitFiles(repository, sha)
@@ -30,6 +30,16 @@ export const fileCreation = (
     const combined = combineConfigurations(defaultValues, repositoryConfiguration)
     const { version, files: processed } = await renderFiles(combined)
     const pullRequestNumber = await commitFilesToPR(repository, version, processed)
+
+    if (combined.automerge) {
+      const merged = await mergePullRequest(pullRequestNumber, repository)
+      if (merged) {
+        log.debug('Merged PR #%d.', pullRequestNumber)
+      } else {
+        log.debug('Failed to merge PR #%d.', pullRequestNumber)
+        await commentMergeErrorOnPullRequest(repository, pullRequestNumber)
+      }
+    }
 
     if (pullRequestNumber) {
       log.info('Committed files to %s/%s in #%d', owner, repo, pullRequestNumber)

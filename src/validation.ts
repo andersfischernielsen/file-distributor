@@ -43,7 +43,12 @@ export const validation = (
   }
 
   const processCheck = async (input: CheckInput) => {
-    const { updateCheck, createCheck, getFilesChanged, commentOnPullRequest } = git(log, octokit)
+    const {
+      updateCheck,
+      createCheck,
+      getFilesChanged,
+      commentErrorOnPullRequest: commentOnPullRequest,
+    } = git(log, octokit)
     const { determineConfigurationChanges } = configuration(log, octokit)
     const conclusion = (errors: ValidationError[]) => (errors.length > 0 ? 'action_required' : 'success')
     const { prNumber, repository, configFileName, sha, checkId } = input
