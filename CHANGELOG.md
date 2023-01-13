@@ -1,3 +1,15 @@
+# v2.14.0 (Fri Jan 13 2023)
+
+#### 🎁 Features
+
+- Ensure automerge functionality works as expected [#111](https://github.com/pleo-io/file-distributor/pull/111) ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+#### Authors: 1
+
+- Anders Fischer-Nielsen ([@andersfischernielsen](https://github.com/andersfischernielsen))
+
+---
+
 # v2.13.6 (Thu Jan 12 2023)
 
 #### 🐞 Fixes
